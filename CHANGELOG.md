@@ -1,3 +1,7 @@
+## 1.4.0
+
+* Added support for showLoadingFlowAsyncNotifier.
+
 ## 1.3.0
 
 * Loading now supports dynamic messages.

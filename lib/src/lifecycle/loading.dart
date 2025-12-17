@@ -1,3 +1,4 @@
+import 'package:an_async_data/an_async_data.dart';
 import 'package:an_dialogs/src/loading.dart';
 import 'package:an_dialogs/src/tools.dart';
 import 'package:an_dialogs/src/tools/tools.dart';
@@ -68,6 +69,49 @@ extension LifecycleLoadingExt on ILifecycle {
           {required LoadingMessageBuilder messageBuilder,
           required Cancellable cancellable}) =>
       _show(cancellable: cancellable, messageBuilder: messageBuilder);
+
+  /// 为异步的数据 的ValueNotifier 自动展示loading
+  void showLoadingFlowAsyncNotifier<T>(
+      {required ValueNotifier<AsyncData<T>> asyncNotifier,
+      bool repeat = false,
+      Cancellable? cancellable,
+      String message = ''}) {
+    Cancellable? loadingAble;
+    if (repeat) {
+      asyncNotifier
+          .asStream()
+          .bindCancellable(makeLiveCancellable(other: cancellable))
+          .listen((event) {
+        if (event.isLoading) {
+          loadingAble = makeLiveCancellable(other: cancellable);
+          repeatOnLifecycleStarted(
+            cancellable: loadingAble,
+            runWithDelayed: true,
+            block: (cancellable) {
+              showLoading(cancellable: cancellable, message: message);
+            },
+          );
+        } else {
+          loadingAble?.cancel();
+        }
+      });
+    } else {
+      if (asyncNotifier.isLoading) {
+        loadingAble = makeLiveCancellable(other: cancellable);
+        repeatOnLifecycleStarted(
+          cancellable: loadingAble,
+          runWithDelayed: true,
+          block: (cancellable) {
+            showLoading(cancellable: cancellable, message: message);
+          },
+        );
+        asyncNotifier
+            .firstWhereValue((value) => !value.isLoading,
+                cancellable: loadingAble)
+            .then((_) => loadingAble?.cancel());
+      }
+    }
+  }
 }
 
 extension FutureLoadingExt<T> on Future<T> {
