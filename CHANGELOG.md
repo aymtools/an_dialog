@@ -1,3 +1,11 @@
+## 1.5.0
+
+*
+
+### Break change
+
+* remove PopScopeCompat.
+
 ## 1.4.0
 
 * Added support for showLoadingFlowAsyncNotifier.

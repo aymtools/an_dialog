@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:an_dialogs/an_dialogs.dart';
-import 'package:an_dialogs/pop_intercept.dart';
 import 'package:an_lifecycle_cancellable/an_lifecycle_cancellable.dart';
 import 'package:anlifecycle/anlifecycle.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +11,9 @@ void main() {
 }
 
 void initDialogs() {
-  Widget onBackPressedIntercept(Widget child) => PopScopeCompat(
+  Widget onBackPressedIntercept(Widget child) => PopScope(
         canPop: false,
-        onPop: (didPop, result) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
         },
         child: child,
