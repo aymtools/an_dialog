@@ -70,19 +70,38 @@ extension LifecycleLoadingExt on ILifecycle {
           required Cancellable cancellable}) =>
       _show(cancellable: cancellable, messageBuilder: messageBuilder);
 
-  /// 为异步的数据 的ValueNotifier 自动展示loading
-  void showLoadingFlowAsyncNotifier<T>(
-      {required ValueNotifier<AsyncData<T>> asyncNotifier,
+  ///  为ValueNotifier 自动展示loading
+  ///  * [test] 触发loading的条件 true:loading false:不loading
+  ///  * [repeat] 是否重复触发loading
+  ///  * [cancellable] 取消当前操作
+  ///  * [message] loading message
+  void showLoadingFlowValueNotifier<T>(ValueNotifier<T> notifier,
+      {required bool Function(T) test,
       bool repeat = false,
       Cancellable? cancellable,
       String message = ''}) {
     Cancellable? loadingAble;
     if (repeat) {
-      asyncNotifier
-          .asStream()
-          .bindCancellable(makeLiveCancellable(other: cancellable))
-          .listen((event) {
-        if (event.isLoading) {
+      if (repeat) {
+        notifier
+            .asStream()
+            .bindCancellable(makeLiveCancellable(other: cancellable))
+            .listen((event) {
+          if (test(event)) {
+            loadingAble = makeLiveCancellable(other: cancellable);
+            repeatOnLifecycleStarted(
+              cancellable: loadingAble,
+              runWithDelayed: true,
+              block: (cancellable) {
+                showLoading(cancellable: cancellable, message: message);
+              },
+            );
+          } else {
+            loadingAble?.cancel();
+          }
+        });
+      } else {
+        if (test(notifier.value)) {
           loadingAble = makeLiveCancellable(other: cancellable);
           repeatOnLifecycleStarted(
             cancellable: loadingAble,
@@ -91,27 +110,28 @@ extension LifecycleLoadingExt on ILifecycle {
               showLoading(cancellable: cancellable, message: message);
             },
           );
-        } else {
-          loadingAble?.cancel();
+          notifier
+              .firstWhereValue((value) => !test(value),
+                  cancellable: loadingAble)
+              .then((_) => loadingAble?.cancel());
         }
-      });
-    } else {
-      if (asyncNotifier.isLoading) {
-        loadingAble = makeLiveCancellable(other: cancellable);
-        repeatOnLifecycleStarted(
-          cancellable: loadingAble,
-          runWithDelayed: true,
-          block: (cancellable) {
-            showLoading(cancellable: cancellable, message: message);
-          },
-        );
-        asyncNotifier
-            .firstWhereValue((value) => !value.isLoading,
-                cancellable: loadingAble)
-            .then((_) => loadingAble?.cancel());
       }
     }
   }
+
+  /// 为异步的数据 的ValueNotifier 自动展示loading
+  void showLoadingFlowAsyncNotifier<T>(
+          {required ValueNotifier<AsyncData<T>> asyncNotifier,
+          bool repeat = false,
+          Cancellable? cancellable,
+          String message = ''}) =>
+      showLoadingFlowValueNotifier(
+        asyncNotifier,
+        test: (v) => v.isLoading,
+        repeat: repeat,
+        cancellable: cancellable,
+        message: message,
+      );
 }
 
 extension FutureLoadingExt<T> on Future<T> {
