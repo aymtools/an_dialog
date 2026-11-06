@@ -110,8 +110,7 @@ extension LifecycleLoadingExt on ILifecycle {
           },
         );
         notifier
-            .firstWhereValue((value) => !test(value),
-                cancellable: loadingAble)
+            .firstWhereValue((value) => !test(value), cancellable: loadingAble)
             .then((_) => loadingAble?.cancel());
       }
     }
