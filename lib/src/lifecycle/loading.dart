@@ -82,26 +82,11 @@ extension LifecycleLoadingExt on ILifecycle {
       String message = ''}) {
     Cancellable? loadingAble;
     if (repeat) {
-      if (repeat) {
-        notifier
-            .asStream()
-            .bindCancellable(makeLiveCancellable(other: cancellable))
-            .listen((event) {
-          if (test(event)) {
-            loadingAble = makeLiveCancellable(other: cancellable);
-            repeatOnLifecycleStarted(
-              cancellable: loadingAble,
-              runWithDelayed: true,
-              block: (cancellable) {
-                showLoading(cancellable: cancellable, message: message);
-              },
-            );
-          } else {
-            loadingAble?.cancel();
-          }
-        });
-      } else {
-        if (test(notifier.value)) {
+      notifier
+          .asStream()
+          .bindCancellable(makeLiveCancellable(other: cancellable))
+          .listen((event) {
+        if (test(event)) {
           loadingAble = makeLiveCancellable(other: cancellable);
           repeatOnLifecycleStarted(
             cancellable: loadingAble,
@@ -110,11 +95,24 @@ extension LifecycleLoadingExt on ILifecycle {
               showLoading(cancellable: cancellable, message: message);
             },
           );
-          notifier
-              .firstWhereValue((value) => !test(value),
-                  cancellable: loadingAble)
-              .then((_) => loadingAble?.cancel());
+        } else {
+          loadingAble?.cancel();
         }
+      });
+    } else {
+      if (test(notifier.value)) {
+        loadingAble = makeLiveCancellable(other: cancellable);
+        repeatOnLifecycleStarted(
+          cancellable: loadingAble,
+          runWithDelayed: true,
+          block: (cancellable) {
+            showLoading(cancellable: cancellable, message: message);
+          },
+        );
+        notifier
+            .firstWhereValue((value) => !test(value),
+                cancellable: loadingAble)
+            .then((_) => loadingAble?.cancel());
       }
     }
   }
@@ -174,6 +172,6 @@ extension StreamLoadingExt<T> on Stream<T> {
     if (onErrorCallCancel) {
       result = handleError((_) => cancellable?.cancel());
     }
-    return result.onData((_) => cancellable?.cancel);
+    return result.onData((_) => cancellable?.cancel());
   }
 }

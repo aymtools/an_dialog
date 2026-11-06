@@ -1,4 +1,4 @@
-name: Dart Package CI/CD
+name: Flutter Package CI/CD
 
 on:
   push:
