@@ -52,10 +52,10 @@ Widget defaultLoadingDialogContentBuilder(
 ) {
   Widget child;
   if (messageBuilder == null) {
-    child = SizedBox(
+    child = const SizedBox(
       width: 60,
       height: 60,
-      child: Center(child: const CircularProgressIndicator()),
+      child: Center(child: CircularProgressIndicator()),
     );
   } else {
     child = Column(
@@ -68,7 +68,7 @@ Widget defaultLoadingDialogContentBuilder(
     );
   }
   return Dialog(
-    insetPadding: EdgeInsets.all(100),
+    insetPadding: const EdgeInsets.all(100),
     child: Padding(
       padding: const EdgeInsets.all(24),
       child: child,
