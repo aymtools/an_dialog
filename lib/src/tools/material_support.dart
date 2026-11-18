@@ -26,7 +26,8 @@ Widget dialogLabelActionBuilderSupport(
   );
 }
 
-RawDialogRoute<void> loadingDialogRouteBuilderSupport(context, dialogContent) {
+RawDialogRoute<void> loadingDialogRouteBuilderSupport(
+    BuildContext context, Widget dialogContent) {
   return DialogRoute<void>(
     context: context,
     barrierDismissible: false,
