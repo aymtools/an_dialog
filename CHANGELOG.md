@@ -1,3 +1,8 @@
+## 1.5.1
+
+* Isolated `flutter/material.dart` dependencies into `material_support.dart` to resolve Material
+  lint and deprecation warnings when Material is disabled or unreferenced.
+
 ## 1.5.0
 
 * Added support for showLoadingFlowValueNotifier.

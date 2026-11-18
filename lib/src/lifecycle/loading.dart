@@ -5,7 +5,7 @@ import 'package:an_dialogs/src/tools/tools.dart';
 import 'package:an_lifecycle_cancellable/an_lifecycle_cancellable.dart';
 import 'package:anlifecycle/anlifecycle.dart';
 import 'package:cancellable/cancellable.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 final _loadingKey = Object();
 

@@ -48,7 +48,6 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          spacing: 12,
           children: [
             TextButton(
               onPressed: () {

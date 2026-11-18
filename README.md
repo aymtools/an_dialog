@@ -41,8 +41,25 @@ void initDialogs() {
   LoadingConfig.instance.XXXX;
   DialogsConfig.instance.XXX;
 }
-
 ```
+
+> **Note / 特殊说明**:
+> If your project disables or does not depend on `flutter/material.dart` (e.g. using `material_ui` package), you must explicitly specify and configure the corresponding functions in `DialogsConfig.instance` and `LoadingConfig.instance` to override the defaults in `material_support.dart`.
+>
+> 如果使用了 `material_ui` 等自定义 UI 包或禁用了默认的 `flutter/material.dart`，则必须在 `DialogsConfig.instance` 和 `LoadingConfig.instance` 中显式指定 `material_support.dart` 对应的函数内容：
+>
+> ```dart
+> void initDialogs() {
+>   // 自定义 Dialog 路由、内容与按钮构建器
+>   DialogsConfig.instance.dialogRouteBuilder = (context, dialogContent) { ... };
+>   DialogsConfig.instance.dialogContentBuilder = (context, title, content, confirm, cancel) { ... };
+>   DialogsConfig.instance.dialogLabelActionBuilder = (context, label, onPressed) { ... };
+>
+>   // 自定义 Loading 路由与内容构建器
+>   LoadingConfig.instance.loadingDialogRouteBuilder = (context, dialogContent) { ... };
+>   LoadingConfig.instance.loadingDialogContentBuilder = (context, messageBuilder) { ... };
+> }
+> ```
 
 #### 1.3 Use loading to automatically manage appearance and disappearance.
 

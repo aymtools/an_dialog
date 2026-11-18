@@ -1,6 +1,7 @@
 import 'package:an_dialogs/src/tools.dart';
+import 'package:an_dialogs/src/tools/material_support.dart';
 import 'package:an_lifecycle_cancellable/an_lifecycle_cancellable.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 typedef DialogContentBuilder = Widget Function(BuildContext context,
     Widget? title, Widget content, Widget? confirm, Widget? cancel);
@@ -24,12 +25,7 @@ class DialogsConfig {
       navigator.pushCancellableRoute(dialogRoute, cancellable);
 
   /// 定义如何构建dialog的route
-  DialogRouteBuilder dialogRouteBuilder = (context, dialogContent) {
-    return DialogRoute<void>(
-      context: context,
-      builder: (BuildContext context) => dialogContent,
-    );
-  };
+  DialogRouteBuilder dialogRouteBuilder = dialogRouteBuilderSupport;
 
   DialogRouteBuilder? _alert, _confirm;
 
@@ -50,23 +46,11 @@ class DialogsConfig {
   }
 
   /// 定义dialog内容如何布局
-  DialogContentBuilder dialogContentBuilder =
-      (context, title, content, confirm, cancel) {
-    return AlertDialog(
-      title: title,
-      content: content,
-      actions: [if (cancel != null) cancel, if (confirm != null) confirm],
-    );
-  };
+  DialogContentBuilder dialogContentBuilder = dialogContentBuilderSupport;
 
   /// 定义dialog 中如何将label转换为按钮
   DialogLabelActionBuilder dialogLabelActionBuilder =
-      (context, label, onPressed) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Text(label),
-    );
-  };
+      dialogLabelActionBuilderSupport;
 
   DialogLabelActionBuilder? _alertAction,
       _confirmActionConfirm,

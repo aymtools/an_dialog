@@ -1,6 +1,7 @@
 import 'package:an_dialogs/src/tools.dart';
+import 'package:an_dialogs/src/tools/material_support.dart';
 import 'package:an_lifecycle_cancellable/an_lifecycle_cancellable.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 typedef LoadingMessageBuilder = Widget Function(BuildContext context);
 
@@ -28,13 +29,8 @@ class LoadingConfig {
       (Widget child) => child;
 
   /// 定义 如何构建loading的route
-  DialogRouteBuilder loadingDialogRouteBuilder = (context, dialogContent) {
-    return DialogRoute<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) => dialogContent,
-    );
-  };
+  DialogRouteBuilder loadingDialogRouteBuilder =
+      loadingDialogRouteBuilderSupport;
 
   ///
   LoadingMessageWidgetBuilder loadingMessageWidgetBuilder =
@@ -52,28 +48,22 @@ Widget defaultLoadingDialogContentBuilder(
 ) {
   Widget child;
   if (messageBuilder == null) {
-    child = const SizedBox(
+    child = SizedBox(
       width: 60,
       height: 60,
-      child: Center(child: CircularProgressIndicator()),
+      child: Center(child: circularProgressIndicatorBuilderSupport()),
     );
   } else {
     child = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const CircularProgressIndicator(),
+        circularProgressIndicatorBuilderSupport(),
         const SizedBox(height: 16),
         Builder(builder: messageBuilder),
       ],
     );
   }
-  return Dialog(
-    insetPadding: const EdgeInsets.all(100),
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: child,
-    ),
-  );
+  return loadingDialogContentBuilderSupport(child);
 }
 //
 // /// 默认的loading dialog
